@@ -15,10 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.Search_map_window">
-        </activity>
-        <activity android:name=".Activities.Search_location_map" />
-        <activity android:name=".Activities.SearchLocation" />
+        <activity android:name=".Maps.SearchLocationActivity.SearchLocationActivity"></activity>
+        <activity android:name=".Maps.SearchLocationActivity.eeee"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -32,10 +30,8 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Activities.MapActivity"
-            android:label="@string/title_activity_maps"
-
-            >
+            android:name=".Maps.MapActivity.MapActivity"
+            android:label="@string/title_activity_maps">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,40 +1,38 @@
-package com.erwin.tecnoagenda.Activities
+package com.erwin.tecnoagenda.Maps.MapActivity
 
-import android.app.ActivityOptions
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.transition.Explode
 import android.view.*
-import android.widget.TextView
 
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.widget.SearchView
-import com.erwin.tecnoagenda.Fragments.SearchLocationMap
+import androidx.databinding.DataBindingUtil
+import com.erwin.tecnoagenda.Maps.SearchLocationActivity.SearchLocationActivity
 import com.erwin.tecnoagenda.R
-import com.erwin.tecnoagenda.Utils.snackBar
+import com.erwin.tecnoagenda.databinding.ActivityMapsBinding
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.activity_maps.*
-import org.w3c.dom.Text
-import java.lang.Exception
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener{
 
 
     private lateinit var mMap: GoogleMap
+    private lateinit var binding:ActivityMapsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
 
-        setSupportActionBar(map_toolbar)
+        binding=DataBindingUtil.setContentView(this,R.layout.activity_maps)
+
+
+        setSupportActionBar(binding.mapToolbar)
         supportActionBar?.title = null
         //toast("hola desde el toast")
         //configurations for navigation  drawer
@@ -42,7 +40,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
         //get configurations of the navigationView
         val supActionBar=supportActionBar
 
-        search_location_map_activity.setOnClickListener { startActivity(Intent(this,Search_map_window::class.java))}
 
 
 
@@ -52,18 +49,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
             .findFragmentById(R.id.map_fragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        //        menuInflater.inflate(R.menu.menu_toolbar, menu)
+        menuInflater.inflate(R.menu.menu_toolbar, menu)
 
-        val toggle=ActionBarDrawerToggle(this,map_drawer_layout,map_toolbar,R.string.open_drawer,R.string.close_drawer)
+        val toggle=ActionBarDrawerToggle(this,binding.mapDrawerLayout,binding.mapToolbar,R.string.open_drawer,R.string.close_drawer)
         toggle.isDrawerIndicatorEnabled=true
-        map_drawer_layout.addDrawerListener(toggle)
+        binding.mapDrawerLayout.addDrawerListener(toggle)
         toggle.syncState() //sincroniza los estados
-        navigation.setNavigationItemSelectedListener(this)
+        binding.navigation.setNavigationItemSelectedListener(this)
 
 
         return true
@@ -95,15 +90,42 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
         mMap = googleMap
 
         // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+//        val sydney = LatLng(-34.0, 151.0)
+//        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+
+
+        val campusCentral = LatLng(-17.39356623953956,-66.14553816328916)
+        //gMap.addMarker(MarkerOptions().position(campusCentral).title("Marker in Sydney"))
+
+        val camera: CameraPosition? =
+            CameraPosition.builder().target(campusCentral).zoom(18F).bearing(0F).tilt(90F).build()
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera))
+        //gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(campusCentral,18F))
+        mMap.setMaxZoomPreference(18F)
+
+        val limit = LatLngBounds(LatLng(-17.39307480327583,-66.14951160041626), LatLng(-17.39173972730723,-66.14224269812405))
+        mMap.setLatLngBoundsForCameraTarget(limit)
+
     }
 
     //items for select(To change body of created functions use File | Settings | File Templates.)
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
        return true
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.map_search_item -> {
+                startActivity(Intent(this, SearchLocationActivity::class.java))
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
 
 
 

@@ -13,6 +13,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="144dp"
         android:layout_marginBottom="291dp"
-        android:text="hola mundo"
+        android:text="ESTAS BUSCANDO EN SEARCH"
         android:textSize="34dp" />
 </RelativeLayout>
