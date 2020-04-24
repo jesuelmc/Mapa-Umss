@@ -1,13 +1,17 @@
 package com.erwin.tecnoagenda.Maps.MapActivity
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.*
 import com.erwin.tecnoagenda.Maps.SearchLocationActivity.SearchLocationActivity
+import com.erwin.tecnoagenda.Models.MapLocationModel
 import com.erwin.tecnoagenda.R
 import com.erwin.tecnoagenda.databinding.ActivityMapsBinding
 
@@ -18,13 +22,28 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener{
 
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding:ActivityMapsBinding
+
+    private lateinit var viewModel: MapActivityViewModel
+
+    private lateinit var sheetBehavior:BottomSheetBehavior<View>
+
+
+    companion object {
+        val REQUEST_CODE_SEARCHLOCATION = 3243
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +52,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
 
 
         setSupportActionBar(binding.mapToolbar)
-        supportActionBar?.title = null
+        //supportActionBar?.title = null
         //toast("hola desde el toast")
         //configurations for navigation  drawer
 
@@ -48,6 +67,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map_fragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+
+        buttoBehabior()
+        viewModel=ViewModelProvider(this).get(MapActivityViewModel::class.java)
+
 
     }
 
@@ -99,10 +123,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
         //gMap.addMarker(MarkerOptions().position(campusCentral).title("Marker in Sydney"))
 
         val camera: CameraPosition? =
-            CameraPosition.builder().target(campusCentral).zoom(18F).bearing(0F).tilt(90F).build()
+            CameraPosition.builder().target(campusCentral).zoom(18F).bearing(0F).tilt(30F).build()
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera))
         //gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(campusCentral,18F))
-        mMap.setMaxZoomPreference(18F)
+        mMap.setMinZoomPreference(18F)
 
         val limit = LatLngBounds(LatLng(-17.39307480327583,-66.14951160041626), LatLng(-17.39173972730723,-66.14224269812405))
         mMap.setLatLngBoundsForCameraTarget(limit)
@@ -117,16 +141,72 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.map_search_item -> {
-                startActivity(Intent(this, SearchLocationActivity::class.java))
+                startActivityForResult(Intent(this, SearchLocationActivity::class.java),REQUEST_CODE_SEARCHLOCATION)
                 true
             }
             else -> {
                 super.onOptionsItemSelected(item)
             }
         }
+
     }
 
+    private fun showLocation(locationModel:MapLocationModel){
 
+        mMap.clear()
+        val location=LatLng(locationModel.latitude.toDouble(),locationModel.longitude.toDouble())
+        mMap.addMarker(MarkerOptions().position(location).title(locationModel.name)).showInfoWindow()
+        val camera: CameraPosition? =
+            CameraPosition.builder().target(location).zoom(18F).bearing(0F).tilt(30F).build()
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera))
+
+
+//        if (sheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
+//        }
+//        else {
+            //sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        //}
+        //binding.buttomSheetMap.visibility=View.VISIBLE
+        //viewModel.onShowLocationComplete()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when(requestCode){
+            REQUEST_CODE_SEARCHLOCATION->{
+                if(resultCode== Activity.RESULT_OK){
+                    if (data != null) {
+
+                        lifecycle.coroutineScope.launch {
+                            val x= withContext(Dispatchers.Default){ viewModel.getLocation((data.getStringExtra("id"))!!.toInt())}
+                            //viewModel.setLocation((data.getStringExtra("id"))!!.toInt())
+                            showLocation(x)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun buttoBehabior(){
+        //val coordinatorLayou:CoordinatorLayout=binding.myCoordinatorLayout
+
+
+        val bottom_sheet=binding.buttomSheetMap
+        sheetBehavior=BottomSheetBehavior.from(bottom_sheet)
+        sheetBehavior.state=BottomSheetBehavior.STATE_HIDDEN
+
+        sheetBehavior.addBottomSheetCallback( object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+        })
+    }
 
 
 }

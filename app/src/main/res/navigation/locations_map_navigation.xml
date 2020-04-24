@@ -3,24 +3,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/locations_map_navigation"
-    app:startDestination="@id/allLocationsMapFragment">
+    app:startDestination="@id/allTypeMapLocationsFragment">
 
     <fragment
-        android:id="@+id/allLocationsMapFragment"
-        android:name="com.erwin.tecnoagenda.Maps.AllLocationsMapFragment"
+        android:id="@+id/allTypeMapLocationsFragment"
+        android:name="com.erwin.tecnoagenda.Maps.AllTypeMapLocationsFragment"
         android:label="fragment_all_locations_map"
-        tools:layout="@layout/fragment_all_locations_map" >
+        tools:layout="@layout/fragment_all_type_map_locations" >
         <action
-            android:id="@+id/action_allLocationsMapFragment_to_searchLocationMap"
-            app:destination="@id/searchLocationMap" />
+            android:id="@+id/action_allTypeMapLocationsFragment_to_allMapLocationsFragment"
+            app:destination="@id/allMapLocationsFragment" />
+        <action
+            android:id="@+id/action_allTypeMapLocationsFragment_to_searchLocationMapFragment"
+            app:destination="@id/searchLocationMapFragment" />
     </fragment>
     <fragment
-        android:id="@+id/searchLocationMap"
+        android:id="@+id/searchLocationMapFragment"
         android:name="com.erwin.tecnoagenda.Fragments.SearchLocationMap"
         android:label="fragment_search_location_map"
-        tools:layout="@layout/fragment_search_location_map" >
-        <action
-            android:id="@+id/action_searchLocationMap_to_allLocationsMapFragment"
-            app:destination="@id/allLocationsMapFragment" />
+        tools:layout="@layout/fragment_search_location_map" />
+    <fragment
+        android:id="@+id/allMapLocationsFragment"
+        android:name="com.erwin.tecnoagenda.Maps.LocationsAcordingTypeFragment"
+        android:label="AllMapLocationsFragment"
+        tools:layout="@layout/fragment_all_locations_acording_type"
+        >
+        <argument
+            android:name="tipo"
+            app:argType="string" />
     </fragment>
 </navigation>

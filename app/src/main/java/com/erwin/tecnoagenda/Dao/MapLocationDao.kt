@@ -2,10 +2,8 @@ package com.erwin.tecnoagenda.Dao
 
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.lifecycle.MutableLiveData
+import androidx.room.*
 import com.erwin.tecnoagenda.Models.MapLocationModel
 
 //es una clase para Dao
@@ -21,9 +19,16 @@ interface MapLocationDao {
     @Query("DELETE FROM map_location")
     suspend fun deleteAll()
 
+    @Query("SELECT * FROM map_location WHERE type=:type")
+    suspend fun getAllLocationsMapAccordingType(type:String):List<MapLocationModel>
+
+    @Query("SELECT * FROM map_location GROUP BY type")
+    fun getAllTypeMapLocations():LiveData<List<MapLocationModel>>
+
     @Query("SELECT * FROM map_location")
-    fun getAllLocationMap():LiveData<List<MapLocationModel>>
+    fun getAllLocationsMap():LiveData<MutableList<MapLocationModel>>
 
-
+    @Query("SELECT * FROM map_location WHERE id=:id")
+    suspend fun getLocation(id:Int):MapLocationModel
 
 }

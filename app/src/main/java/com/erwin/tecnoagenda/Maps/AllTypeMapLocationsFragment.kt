@@ -4,24 +4,27 @@ package com.erwin.tecnoagenda.Maps
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.erwin.tecnoagenda.Maps.SearchLocationActivity.LocationTypeAdapter
 
 import com.erwin.tecnoagenda.R
 import com.erwin.tecnoagenda.SearchLocationActivityViewModel
-import com.erwin.tecnoagenda.databinding.FragmentAllLocationsMapBinding
+import com.erwin.tecnoagenda.databinding.FragmentAllTypeMapLocationsBinding
 
 /**
  * A simple [Fragment] subclass.
  */
-class AllLocationsMapFragment : Fragment() {
+class AllTypeMapLocationsFragment : Fragment() {
 
-    lateinit var binding: FragmentAllLocationsMapBinding
+    lateinit var binding: FragmentAllTypeMapLocationsBinding
     private lateinit var searchLocationViewModel:SearchLocationActivityViewModel
 
     override fun onCreateView(
@@ -29,21 +32,19 @@ class AllLocationsMapFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding=DataBindingUtil.inflate(inflater,R.layout.fragment_all_locations_map, container, false)
+        binding=DataBindingUtil.inflate(inflater,R.layout.fragment_all_type_map_locations, container, false)
 
-        val recyclerView =binding.RecyclerViewAllMapLocations
-        val adapter = context?.let { LocationTypeAdapter(it) }
+        val recyclerView =binding.RecyclerViewAllTypeMapLocations
+        val adapter = context?.let { LocationTypeAdapter(it,this) }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         searchLocationViewModel=ViewModelProvider(this).get(SearchLocationActivityViewModel::class.java)
-        searchLocationViewModel.allLocationMap.observe(viewLifecycleOwner, Observer {locations->
-            locations.let { adapter?.setlocations(it) }
-
+        searchLocationViewModel.alltypeMapLocations.observe(viewLifecycleOwner, Observer {type->
+            type.let { adapter?.setlocations(it) }
         })
 
         return binding.root
     }
-
 
 }

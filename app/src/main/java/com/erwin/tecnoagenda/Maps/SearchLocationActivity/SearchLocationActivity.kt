@@ -1,27 +1,26 @@
-package com.erwin.tecnoagenda.Maps.SearchLocationActivity
+package com.erwin. tecnoagenda.Maps.SearchLocationActivity
 
-import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.erwin.tecnoagenda.Models.MapLocationModel
 import com.erwin.tecnoagenda.R
 import com.erwin.tecnoagenda.SearchLocationActivityViewModel
+import com.erwin.tecnoagenda.Utils.snackBar
 import com.erwin.tecnoagenda.databinding.ActivitySearchLocationBinding
-import com.google.android.material.snackbar.Snackbar
 
 class SearchLocationActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivitySearchLocationBinding
     private lateinit var viewModel:SearchLocationActivityViewModel
+
+    //navigate on backpresed
+    private var nav=true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,22 +31,16 @@ class SearchLocationActivity : AppCompatActivity() {
 
         supportActionBar?.title = null
 
-
-
         //ViewModelProvider.AndroidViewModelFactory()
 
         viewModel= ViewModelProvider(this).get(SearchLocationActivityViewModel::class.java)
 
-//        viewModel.allLocationMap.observe(this, Observer {locations->
-//
-//            setText(locations)
-//
-//        })
-
-
         listenerTextInputSerchView()
 
 
+
+        //soluciono el problema de que el teclado ocultaba el fragmento
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -66,24 +59,37 @@ class SearchLocationActivity : AppCompatActivity() {
     fun listenerTextInputSerchView(){
 
         //val x= SearchView.OnQueryTextListener
-    val navControllerMap=findNavController(R.id.searchLocationNavHostFragment)
+        val navController=findNavController(R.id.searchLocationNavHostFragment)
 
 
         binding.searchviewLocationItem.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String?): Boolean {
-                if(newText=="") navControllerMap.navigate(R.id.allLocationsMapFragment)
-                else navControllerMap.navigate(R.id.searchLocationMap)
 
-
-
-                return false
+                if(newText=="") {
+                    nav=true
+                    onBackPressed()
+                }
+                else{
+                    snackBar(newText!!,findViewById(R.id.searchview_location_item))
+                    viewModel.searchViewText.value=newText
+                    if(nav){
+                        nav=false
+                        navController.navigate(R.id.searchLocationMapFragment)
+                    }
+                }
+                return true
             }
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+               return false
             }
 
+
         })
+    }
+    override fun onBackPressed() {
+        if (!nav) binding.searchviewLocationItem.setQuery("",false)
+        else super.onBackPressed()
     }
 
 

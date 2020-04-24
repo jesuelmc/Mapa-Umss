@@ -41,9 +41,8 @@ Easy Coroutines en Android: viewModelScope blogpost .:https://medium.com/android
 
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
+import android.view.View
+import androidx.lifecycle.*
 import com.erwin.tecnoagenda.Models.MapLocationModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -57,13 +56,32 @@ class SearchLocationActivityViewModel(application: Application) : AndroidViewMod
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    val allLocationMap: LiveData<List<MapLocationModel>>
+    val allLocationMap: LiveData<MutableList<MapLocationModel>>
+    val alltypeMapLocations: LiveData<List<MapLocationModel>>
+    val searchViewText: MutableLiveData<String> = MutableLiveData()
+
+
+    val joinLocationsSearchviewtext :LiveData<Pair<MutableList<MapLocationModel>,String>>
+
+
+//    fun setText(text:String){
+//        searchViewText.value=text
+//    }
+//
+//    fun getText():LiveData<String>{
+//        return searchViewText
+//    }
+
+
 
     init {
         val mapLocationDao = DataBase.getDatabase(application,viewModelScope).mapLocationDao()
         repository = MapLocationRepository(mapLocationDao)
         allLocationMap = repository.allMapLocation
+        alltypeMapLocations=repository.allTypeMapLocations
+        joinLocationsSearchviewtext=joinLocationsSearchViewText(allLocationMap,searchViewText)
     }
+
 
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
@@ -71,7 +89,42 @@ class SearchLocationActivityViewModel(application: Application) : AndroidViewMod
    fun insert(mapLocation: MapLocationModel) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(mapLocation)
     }
-}
+    suspend fun getAllLocationsMapAccordingType(type:String):List<MapLocationModel>{
+        return repository.getAllLocationsMapAccordingType(type)
+    }
+    fun <Locations,Text> joinLocationsSearchViewText(locations:LiveData<Locations>, searchViewText:LiveData<Text>):LiveData<Pair<Locations,Text>>{
+        return MediatorLiveData<Pair<Locations,Text>>().apply {
+            var lastLocation:Locations?=null
+            var text:Text?=null
+            fun update() {
+                val localLastLocation = lastLocation
+                val localLastText = text
+
+                if (localLastLocation != null && localLastText != null) this.value =
+                    Pair(localLastLocation, localLastText)
+            }
+            addSource(locations){
+                lastLocation=it
+                update()
+            }
+            addSource(searchViewText){
+                text=it
+                update()
+            }
+
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 /*
 Aquí tenemos:
 

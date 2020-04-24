@@ -42,13 +42,13 @@ abstract class DataBase : RoomDatabase() {
                     mapLocationDao.deleteAll()
 
                     // Add sample words.
-                    var mapLocation = MapLocationModel("617","aula","-234323","32332")
+                    var mapLocation = MapLocationModel("617","aula","-17.393000064167797","-66.14484943466293","es")
                     mapLocationDao.insert(mapLocation)
 
-                    mapLocation = MapLocationModel("692F","aula","323233","323223")
+                    mapLocation = MapLocationModel("692F","aula","-17.394670944064305","-66.14484514375916","ss")
                     mapLocationDao.insert(mapLocation)
 
-                    mapLocation = MapLocationModel("biblioteca fctyt","edificios","32323","323232")
+                    mapLocation = MapLocationModel("biblioteca fctyt","edificios","-17.392672438916257","-66.14552740760705","ff")
                     mapLocationDao.insert(mapLocation)
                 }
             }

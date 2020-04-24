@@ -10,6 +10,7 @@ class MapLocationModel(
     @ColumnInfo(name = "type") val type: String,
     @ColumnInfo(name = "latitude") val latitude: String,
     @ColumnInfo(name = "longitude") val longitude: String,
+    @ColumnInfo(name="description") val description:String,
     @PrimaryKey(autoGenerate=true)
     @ColumnInfo(name="id") val idAutoGenerate: Int=0
     )

@@ -30,7 +30,7 @@
                         </androidx.appcompat.widget.Toolbar>
 
 
-                        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                        <fragment
                             xmlns:tools="http://schemas.android.com/tools"
                             android:id="@+id/map_fragment"
                             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -38,6 +38,7 @@
                             android:layout_height="match_parent"
                             tools:context=".Maps.MapActivity.MapActivity" />
 
+                        <include layout="@layout/bottom_sheet_map" android:id="@+id/buttom_sheet_map"/>
 
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

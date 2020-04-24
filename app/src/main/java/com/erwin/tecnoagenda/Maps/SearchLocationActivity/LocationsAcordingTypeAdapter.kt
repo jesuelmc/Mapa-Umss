@@ -1,24 +1,25 @@
 package com.erwin.tecnoagenda.Maps.SearchLocationActivity
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.navigation.ActionOnlyNavDirections
-import androidx.navigation.findNavController
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.erwin.tecnoagenda.Models.MapLocationModel
 import com.erwin.tecnoagenda.R
 
-class LocationTypeAdapter internal constructor(
-    context: Context,fragment: Fragment
-) : RecyclerView.Adapter<LocationTypeAdapter.LocationMapViewHolder>() {
+class LocationsAcordingTypeAdapter internal constructor(
+    context: Context,activity: FragmentActivity
+) : RecyclerView.Adapter<LocationsAcordingTypeAdapter.LocationMapViewHolder>() {
 
-    private val fragment:Fragment=fragment
+    private val activity:FragmentActivity=activity
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var locations = emptyList<MapLocationModel>() // Cached copy of locations
 
@@ -28,13 +29,12 @@ class LocationTypeAdapter internal constructor(
         }
         override fun onClick(v: View?) {
             val mPosition:Int=layoutPosition
-            val type: MapLocationModel = locations[mPosition]
+            val location: MapLocationModel = locations[mPosition]
 
-            val nav=findNavController(fragment)
-
-            var bundle= bundleOf("tipo" to type.type)
-
-            nav.navigate(R.id.action_allTypeMapLocationsFragment_to_allMapLocationsFragment,bundle)
+            val intent=Intent()
+            intent.putExtra("id",(location.idAutoGenerate).toString())
+            activity.setResult(Activity.RESULT_OK,intent)
+            activity.finish()
         }
 
         val LocationTypeItemView: TextView = itemView.findViewById(R.id.textViewLocationType)
@@ -47,7 +47,7 @@ class LocationTypeAdapter internal constructor(
 
     override fun onBindViewHolder(holder: LocationMapViewHolder, position: Int) {
         val current = locations[position]
-        holder.LocationTypeItemView.text = current.type
+        holder.LocationTypeItemView.text = current.name
     }
 
     internal fun setlocations(locations: List<MapLocationModel>) {
