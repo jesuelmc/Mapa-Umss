@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/allTypeMapLocationsFragment"
-        android:name="com.erwin.tecnoagenda.Maps.AllTypeMapLocationsFragment"
+        android:name="com.erwinlaura.agendafcyt.Maps.AllTypeMapLocationsFragment"
         android:label="fragment_all_locations_map"
         tools:layout="@layout/fragment_all_type_map_locations" >
         <action
@@ -19,12 +19,12 @@
     </fragment>
     <fragment
         android:id="@+id/searchLocationMapFragment"
-        android:name="com.erwin.tecnoagenda.Fragments.SearchLocationMap"
+        android:name="com.erwinlaura.agendafcyt.Fragments.SearchLocationMap"
         android:label="fragment_search_location_map"
         tools:layout="@layout/fragment_search_location_map" />
     <fragment
         android:id="@+id/allMapLocationsFragment"
-        android:name="com.erwin.tecnoagenda.Maps.LocationsAcordingTypeFragment"
+        android:name="com.erwinlaura.agendafcyt.Maps.LocationsAcordingTypeFragment"
         android:label="AllMapLocationsFragment"
         tools:layout="@layout/fragment_all_locations_acording_type"
         >

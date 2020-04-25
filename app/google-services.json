@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "753113567686",
+    "firebase_url": "https://agenda-fcyt.firebaseio.com",
+    "project_id": "agenda-fcyt",
+    "storage_bucket": "agenda-fcyt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753113567686:android:03b3ec3e7308b1ec3062c7",
+        "android_client_info": {
+          "package_name": "com.erwinlaura.agendafcyt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "753113567686-4k2rspndpqbocioffatmbc48j4i48lfs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQ6fUOsq3r2MjjgQIZckfi2wTihQ8q3Yk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "753113567686-4k2rspndpqbocioffatmbc48j4i48lfs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
