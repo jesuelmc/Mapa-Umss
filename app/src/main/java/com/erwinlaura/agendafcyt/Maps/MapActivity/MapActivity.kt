@@ -1,10 +1,7 @@
 package com.erwinlaura.agendafcyt.Maps.MapActivity
 
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
@@ -16,9 +13,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.*
 import androidx.preference.PreferenceManager
 import com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.SearchLocationActivity
-import com.erwinlaura.agendafcyt.Models.MapLocationModel
-import com.erwinlaura.agendafcyt.Presentation.PresentationActivity
-import com.erwinlaura.agendafcyt.Presentation.PresentationFragment
+import com.erwinlaura.agendafcyt.PresentationActivity.PresentationActivity
+import com.erwinlaura.agendafcyt.PresentationActivity.PresentationFragment
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.Utils.snackBar
 import com.erwinlaura.agendafcyt.databinding.ActivityMapsBinding
@@ -30,16 +26,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Source
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.FileNotFoundException
 import java.util.*
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener{
@@ -121,7 +112,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
 
         /*val fragmentManager=supportFragmentManager
         val fragmentTransaction= fragmentManager.beginTransaction()
-        val fragment = SearchLocationMap()
+        val fragment = SearchLocationMapFragment()
         fragmentTransaction.add(R.id.myCoordinatorLayout,fragment)
         fragmentTransaction.commit()*/
     }

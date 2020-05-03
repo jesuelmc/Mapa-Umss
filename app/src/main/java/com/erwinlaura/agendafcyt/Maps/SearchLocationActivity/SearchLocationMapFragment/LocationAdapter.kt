@@ -1,4 +1,4 @@
-package com.erwinlaura.agendafcyt.Maps.SearchLocationActivity
+package com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.SearchLocationMapFragment
 
 import android.app.Activity
 import android.content.Context
@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.erwinlaura.agendafcyt.Models.MapLocationModel
 import com.erwinlaura.agendafcyt.R
 import com.google.firebase.firestore.DocumentSnapshot
 

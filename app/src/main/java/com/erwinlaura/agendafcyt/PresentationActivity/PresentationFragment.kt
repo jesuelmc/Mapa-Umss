@@ -1,4 +1,4 @@
-package com.erwinlaura.agendafcyt.Presentation
+package com.erwinlaura.agendafcyt.PresentationActivity
 
 
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.preference.PreferenceManager
 
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.databinding.FragmentPresentationBinding

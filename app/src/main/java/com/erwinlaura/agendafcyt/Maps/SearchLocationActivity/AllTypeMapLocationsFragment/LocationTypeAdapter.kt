@@ -1,4 +1,4 @@
-package com.erwinlaura.agendafcyt.Maps.SearchLocationActivity
+package com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.AllTypeMapLocationsFragment
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,10 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.erwinlaura.agendafcyt.Models.MapLocationModel
 import com.erwinlaura.agendafcyt.R
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
 
 class LocationTypeAdapter internal constructor(
     context: Context, private val fragment: Fragment

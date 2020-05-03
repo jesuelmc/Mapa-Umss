@@ -1,4 +1,4 @@
-package com.erwinlaura.agendafcyt.Fragments
+package com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.SearchLocationMapFragment
 
 
 import android.os.Bundle
@@ -10,18 +10,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.LocationAdapter
 
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.SearchLocationActivityViewModel
 import com.erwinlaura.agendafcyt.databinding.FragmentSearchLocationMapBinding
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Source
 
 /**
  * A simple [Fragment] subclass.
  */
-class SearchLocationMap : Fragment() {
+class SearchLocationMapFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchLocationMapBinding
     private lateinit var viewModel: SearchLocationActivityViewModel
@@ -34,7 +32,12 @@ class SearchLocationMap : Fragment() {
 
 
         val recyclerView =binding.RecyclerViewAllMapLocations
-        val adapter = context?.let { activity?.let { it1 -> LocationAdapter(it, it1) } }!!
+        val adapter = context?.let { activity?.let { it1 ->
+            LocationAdapter(
+                it,
+                it1
+            )
+        } }!!
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 

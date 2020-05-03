@@ -1,4 +1,4 @@
-package com.erwinlaura.agendafcyt.Maps
+package com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.LocationsAcordingTypeFragment
 
 
 import android.os.Bundle
@@ -7,18 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.LocationsAcordingTypeAdapter
-import com.erwinlaura.agendafcyt.Models.MapLocationModel
 
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.databinding.FragmentAllLocationsAcordingTypeBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
-import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -39,7 +33,12 @@ class LocationsAcordingTypeFragment : Fragment() {
         //binding.textViewMapLocation.text = arguments?.getString("tipo")
 
         val recyclerView =binding.RecyclerViewAllLocationsAcordingType
-        val adapter = context?.let { activity?.let { it1 -> LocationsAcordingTypeAdapter(it, it1) } }!!
+        val adapter = context?.let { activity?.let { it1 ->
+            LocationsAcordingTypeAdapter(
+                it,
+                it1
+            )
+        } }!!
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 

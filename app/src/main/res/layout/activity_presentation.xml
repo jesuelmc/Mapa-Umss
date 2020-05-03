@@ -10,13 +10,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Presentation.PresentationActivity">
+        tools:context=".PresentationActivity.PresentationActivity">
 
         <fragment
             android:id="@+id/presentationFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="com.erwinlaura.agendafcyt.Presentation.PresentationFragment"
+            android:name="com.erwinlaura.agendafcyt.PresentationActivity.PresentationFragment"
             />
 
     </LinearLayout>

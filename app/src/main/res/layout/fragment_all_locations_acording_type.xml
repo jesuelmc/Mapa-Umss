@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Maps.LocationsAcordingTypeFragment">
+        tools:context=".Maps.SearchLocationActivity.LocationsAcordingTypeFragment.LocationsAcordingTypeFragment">
 
         <!-- TODO: Update blank fragment layout -->
 

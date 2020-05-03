@@ -1,4 +1,4 @@
-package com.erwinlaura.agendafcyt.Presentation
+package com.erwinlaura.agendafcyt.PresentationActivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

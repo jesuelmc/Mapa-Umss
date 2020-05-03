@@ -1,4 +1,4 @@
-package com.erwinlaura.agendafcyt.Maps
+package com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.AllTypeMapLocationsFragment
 
 
 import android.os.Bundle
@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.LocationTypeAdapter
 
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.SearchLocationActivityViewModel
@@ -33,7 +31,12 @@ class AllTypeMapLocationsFragment : Fragment() {
         binding=DataBindingUtil.inflate(inflater,R.layout.fragment_all_type_map_locations, container, false)
 
         val recyclerView =binding.RecyclerViewAllTypeMapLocations
-        val adapter = context?.let { LocationTypeAdapter(it,this) }
+        val adapter = context?.let {
+            LocationTypeAdapter(
+                it,
+                this
+            )
+        }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 

@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Fragments.SearchLocationMap">
+        tools:context=".Maps.SearchLocationActivity.SearchLocationMapFragment.SearchLocationMapFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/RecyclerViewAllMapLocations"
