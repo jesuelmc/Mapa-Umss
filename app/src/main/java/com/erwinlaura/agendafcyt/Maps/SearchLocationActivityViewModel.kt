@@ -43,6 +43,9 @@ Easy Coroutines en Android: viewModelScope blogpost .:https://medium.com/android
 import android.app.Application
 import androidx.lifecycle.*
 import com.erwinlaura.agendafcyt.Models.MapLocationModel
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -55,30 +58,30 @@ class SearchLocationActivityViewModel(application: Application) : AndroidViewMod
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    val allLocationMap: LiveData<MutableList<MapLocationModel>>
-    val alltypeMapLocations: LiveData<List<MapLocationModel>>
+    // val allLocationMap: LiveData<MutableList<MapLocationModel>>
+    //val alltypeMapLocations: LiveData<List<MapLocationModel>>
     val searchViewText: MutableLiveData<String> = MutableLiveData()
 
 
-    val joinLocationsSearchviewtext :LiveData<Pair<MutableList<MapLocationModel>,String>>
+    //firestore
+    var dbFirestore= FirebaseFirestore.getInstance()
+    val alltypeMapLocations=dbFirestore.collection("Locations").document("Types")
+    var locations=dbFirestore.collection("Locations")
 
 
-//    fun setText(text:String){
-//        searchViewText.value=text
-//    }
-//
-//    fun getText():LiveData<String>{
-//        return searchViewText
-//    }
+    //val joinLocationsSearchviewtext :LiveData<Pair<MutableList<MapLocationModel>,String>>
+
 
 
 
     init {
         val mapLocationDao = DataBase.getDatabase(application,viewModelScope).mapLocationDao()
         repository = MapLocationRepository(mapLocationDao)
-        allLocationMap = repository.allMapLocation
-        alltypeMapLocations=repository.allTypeMapLocations
-        joinLocationsSearchviewtext=joinLocationsSearchViewText(allLocationMap,searchViewText)
+        //allLocationMap = repository.allMapLocation
+        //alltypeMapLocations=repository.allTypeMapLocations
+
+
+        //joinLocationsSearchviewtext=joinLocationsSearchViewText(allLocationMap,searchViewText)
     }
 
 

@@ -22,10 +22,12 @@
                             android:id="@+id/map_toolbar"
                             android:layout_width="match_parent"
                             android:layout_height="?attr/actionBarSize"
-                            android:background="?attr/colorPrimary"
-                            android:elevation="4dp"
+                            android:background="@drawable/toolbar_style_map"
+                            android:elevation="8dp"
+                            android:layout_margin="8dp"
                             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-                            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                            >
 
                         </androidx.appcompat.widget.Toolbar>
 
@@ -56,9 +58,9 @@
                                     android:orientation="vertical">
 
                                         <TextView
+                                            android:id="@+id/textViewBottom"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Dandelion Chocolate"
                                             android:textColor="#000000"
                                             android:textSize="24sp"
                                             android:textStyle="bold" />
@@ -72,8 +74,8 @@
                                                     android:id="@+id/imageContainerMap"
                                                     android:layout_width="wrap_content"
                                                     android:layout_height="wrap_content"
-                                                    android:orientation="horizontal" >
-                                                        
+                                                    android:orientation="horizontal">
+
 
                                                 </LinearLayout>
 
@@ -87,33 +89,44 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="8dp"
-                                    android:drawableLeft="@drawable/ic_search"
+                                    android:drawableLeft="@drawable/ic_map"
                                     android:drawablePadding="16dp"
-                                    android:text="740 Valencia St, San Fracisco, CA" />
+                                    android:text="aqui se mostrara info extra" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="8dp"
-                                    android:drawableLeft="@drawable/ic_search"
+                                    android:drawableLeft="@drawable/ic_map"
                                     android:drawablePadding="16dp"
-                                    android:text="(415) 349-0942" />
+                                    android:text="numero del encargado " />
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_margin="8dp"
-                                    android:drawableLeft="@drawable/ic_search"
+                                    android:drawableLeft="@drawable/ic_map"
                                     android:drawablePadding="16dp"
-                                    android:text="Wed, 10 AM - 9 PM" />
+                                    android:text="facultad" />
+
+                                <ProgressBar
+                                    android:id="@+id/progressBarUploadImage"
+                                    android:layout_width="wrap_content"
+                                    android:background="@color/background"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:indeterminate="true"
+                                    android:visibility="gone" />
 
                                 <Button
+                                    android:id="@+id/buttonGetImage"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="16dp"
                                     android:background="#000"
-                                    android:text="PROCEED PAYMENT"
-                                    android:textColor="#fff" />
+                                    android:text="AGREGAR IMAGEN"
+                                    android:textColor="#fff"
+                                    android:visibility="gone" />
 
                         </LinearLayout>
 

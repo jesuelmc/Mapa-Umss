@@ -15,6 +15,8 @@ import com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.LocationAdapter
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.SearchLocationActivityViewModel
 import com.erwinlaura.agendafcyt.databinding.FragmentSearchLocationMapBinding
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Source
 
 /**
  * A simple [Fragment] subclass.
@@ -23,6 +25,7 @@ class SearchLocationMap : Fragment() {
 
     private lateinit var binding: FragmentSearchLocationMapBinding
     private lateinit var viewModel: SearchLocationActivityViewModel
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -45,9 +48,20 @@ class SearchLocationMap : Fragment() {
 //            adapter.filter(it)
 //        })
 
-        viewModel.joinLocationsSearchviewtext.observe(viewLifecycleOwner, Observer {
-            adapter.filter(it.second,it.first)
-        })
+//        viewModel.joinLocationsSearchviewtext.observe(viewLifecycleOwner, Observer {
+//            adapter.filter(it.second,it.first)
+//        })
+        viewModel.locations.get(Source.CACHE).addOnSuccessListener {
+            val locations = it.documents.toMutableList()
+            viewModel.searchViewText.observe(viewLifecycleOwner, Observer {newText->
+
+                adapter.filter(newText,locations)
+
+            })
+
+        }
+
+
         return binding.root
     }
 

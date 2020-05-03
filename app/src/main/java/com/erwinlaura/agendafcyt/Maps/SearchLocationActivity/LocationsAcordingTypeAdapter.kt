@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.erwinlaura.agendafcyt.Models.MapLocationModel
 import com.erwinlaura.agendafcyt.R
+import com.google.firebase.firestore.DocumentSnapshot
 
 class LocationsAcordingTypeAdapter internal constructor(
     context: Context,activity: FragmentActivity
@@ -18,7 +19,7 @@ class LocationsAcordingTypeAdapter internal constructor(
 
     private val activity:FragmentActivity=activity
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var locations = emptyList<MapLocationModel>() // Cached copy of locations
+    private var locations = emptyList<DocumentSnapshot>() // Cached copy of locations
 
     inner class LocationMapViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),View.OnClickListener {
         init {
@@ -26,10 +27,10 @@ class LocationsAcordingTypeAdapter internal constructor(
         }
         override fun onClick(v: View?) {
             val mPosition:Int=layoutPosition
-            val location: MapLocationModel = locations[mPosition]
+            val locationClickID = locations[mPosition].id
 
             val intent=Intent()
-            intent.putExtra("id",(location.idAutoGenerate).toString())
+            intent.putExtra("id",locationClickID)
             activity.setResult(Activity.RESULT_OK,intent)
             activity.finish()
         }
@@ -43,11 +44,11 @@ class LocationsAcordingTypeAdapter internal constructor(
     }
 
     override fun onBindViewHolder(holder: LocationMapViewHolder, position: Int) {
-        val current = locations[position]
-        holder.LocationTypeItemView.text = current.name
+        val current = locations[position].data?.get("name")
+        holder.LocationTypeItemView.text = current.toString()
     }
 
-    internal fun setlocations(locations: List<MapLocationModel>) {
+    internal fun setlocations(locations: List<DocumentSnapshot>) {
         this.locations = locations
         notifyDataSetChanged()
     }

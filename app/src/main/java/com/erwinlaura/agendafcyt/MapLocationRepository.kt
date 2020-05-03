@@ -16,9 +16,14 @@ Un repositorio gestiona consultas y le
  */
 
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.erwinlaura.agendafcyt.Dao.MapLocationDao
 import com.erwinlaura.agendafcyt.Models.MapLocationModel
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+import java.util.*
 
 // Declares the DAO as a private property in the constructor. Pass in the DAO
 // instead of the whole database, because you only need access to the DAO
@@ -40,6 +45,8 @@ class MapLocationRepository(private val mapLocationDao:MapLocationDao) {
     suspend fun geLocation(id:Int):MapLocationModel{
         return mapLocationDao.getLocation(id)
     }
+
+
 
 }
 

@@ -70,7 +70,7 @@ class SearchLocationActivity : AppCompatActivity() {
                     onBackPressed()
                 }
                 else{
-                    snackBar(newText!!,findViewById(R.id.searchview_location_item))
+                    //snackBar(newText!!,findViewById(R.id.searchview_location_item))
                     viewModel.searchViewText.value=newText
                     if(nav){
                         nav=false

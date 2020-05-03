@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.erwinlaura.agendafcyt.Models.MapLocationModel
 import com.erwinlaura.agendafcyt.R
+import com.google.firebase.firestore.DocumentSnapshot
 
 class LocationAdapter internal constructor(
     context: Context, activity:FragmentActivity
@@ -18,7 +19,7 @@ class LocationAdapter internal constructor(
 
     private val activity:FragmentActivity=activity
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var locations:MutableList<MapLocationModel> = ArrayList()// Cached copy of locations
+    private var locations:MutableList<DocumentSnapshot> = ArrayList()// Cached copy of locations
     //private var locationsCopy:MutableList<MapLocationModelAux> = ArrayList()
 
 
@@ -29,10 +30,9 @@ class LocationAdapter internal constructor(
         override fun onClick(v: View?) {
 
             val mPosition:Int=layoutPosition
-            val location: MapLocationModel = locations[mPosition]
-
+            val locationID = locations[mPosition].id
             val intent =Intent()
-            intent.putExtra("id",(location.idAutoGenerate).toString())
+            intent.putExtra("id",locationID)
             activity.setResult(Activity.RESULT_OK,intent)
             activity.finish()
         }
@@ -45,18 +45,18 @@ class LocationAdapter internal constructor(
     }
 
     override fun onBindViewHolder(holder: LocationMapViewHolder, position: Int) {
-        val current = locations[position]
-        holder.LocationTypeItemView.text = current.name
+        val current = locations[position]["name"].toString()
+        holder.LocationTypeItemView.text = current
     }
 
-    fun filter(text:String, locationsCopy:MutableList<MapLocationModel>){
+    fun filter(text:String, locationsCopy:MutableList<DocumentSnapshot>){
         locations.clear()
         if(text.isEmpty()){
             locations.addAll(locationsCopy)
         }
         else{
             locationsCopy.forEach {item->
-                if(item.name.toLowerCase().contains(text.toLowerCase())){
+                if(item["name"].toString().toLowerCase().contains(text.toLowerCase())){
                     locations.add(item)
                 }
             }

@@ -11,14 +11,16 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.erwinlaura.agendafcyt.Models.MapLocationModel
 import com.erwinlaura.agendafcyt.R
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 
 class LocationTypeAdapter internal constructor(
-    context: Context,fragment: Fragment
+    context: Context, private val fragment: Fragment
 ) : RecyclerView.Adapter<LocationTypeAdapter.LocationMapViewHolder>() {
 
-    private val fragment:Fragment=fragment
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var locations = emptyList<MapLocationModel>() // Cached copy of locations
+    private var locations:List<Pair<String,Any>> = emptyList()
+   // private var locations = emptyList<MapLocationModel>() // Cached copy of locations
 
     inner class LocationMapViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),View.OnClickListener {
         init {
@@ -26,11 +28,9 @@ class LocationTypeAdapter internal constructor(
         }
         override fun onClick(v: View?) {
             val mPosition:Int=layoutPosition
-            val type: MapLocationModel = locations[mPosition]
-
             val nav=findNavController(fragment)
 
-            var bundle= bundleOf("tipo" to type.type)
+            val bundle= bundleOf("tipo" to locations[mPosition].second.toString())
 
             nav.navigate(R.id.action_allTypeMapLocationsFragment_to_allMapLocationsFragment,bundle)
         }
@@ -45,10 +45,14 @@ class LocationTypeAdapter internal constructor(
 
     override fun onBindViewHolder(holder: LocationMapViewHolder, position: Int) {
         val current = locations[position]
-        holder.LocationTypeItemView.text = current.type
+        holder.LocationTypeItemView.text = current.second.toString()
     }
 
-    internal fun setlocations(locations: List<MapLocationModel>) {
+//    internal fun setlocations(locations: List<MapLocationModel>) {
+//        this.locations = locations
+//        notifyDataSetChanged()
+//    }
+    internal fun setlocations(locations:List<Pair<String,Any>>) {
         this.locations = locations
         notifyDataSetChanged()
     }

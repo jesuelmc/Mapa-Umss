@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".Presentation.PresentationFragment">
+
+        <!-- TODO: Update blank fragment layout -->
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="280dp"
+            android:layout_height="138dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="81dp"
+            android:layout_marginTop="256dp"
+            android:layout_marginEnd="50dp"
+            android:text="Conectate a internet para cargar los datos actualizados(solo en esta ocacion)"
+            android:textSize="25dp" />
+
+        <ProgressBar
+            android:id="@+id/progressBarUploadImage"
+            android:layout_width="98dp"
+            android:layout_height="52dp"
+            android:layout_below="@+id/textView"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="170dp"
+            android:layout_marginTop="68dp"
+            android:layout_marginEnd="143dp"
+            android:layout_marginBottom="217dp"
+            android:background="@color/background"
+            android:indeterminate="true" />
+
+
+    </RelativeLayout>
+</layout>

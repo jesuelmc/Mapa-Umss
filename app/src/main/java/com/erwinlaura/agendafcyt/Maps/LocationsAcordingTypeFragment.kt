@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +16,8 @@ import com.erwinlaura.agendafcyt.Models.MapLocationModel
 
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.databinding.FragmentAllLocationsAcordingTypeBinding
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.launch
 
 /**
@@ -23,7 +26,9 @@ import kotlinx.coroutines.launch
 class LocationsAcordingTypeFragment : Fragment() {
 
     private lateinit var binding: FragmentAllLocationsAcordingTypeBinding
-    private lateinit var viewModel: LocationsAcordingTypeViewModel
+
+    var dbFirestore= FirebaseFirestore.getInstance()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,14 +43,20 @@ class LocationsAcordingTypeFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        viewModel= ViewModelProvider(this).get(LocationsAcordingTypeViewModel::class.java)
+//        lifecycle.coroutineScope.launch {
+//            val locations=arguments?.getString("tipo")
+//            val locationsAcordingType: List<MapLocationModel> =viewModel.getLocationsAcordingType(locations!!)
+//            adapter.setlocations(locationsAcordingType)
+//            }
 
-
-        lifecycle.coroutineScope.launch {
-            val locations=arguments?.getString("tipo")
-            val locationsAcordingType: List<MapLocationModel> =viewModel.getLocationsAcordingType(locations!!)
-            adapter.setlocations(locationsAcordingType)
-            }
+        val locationBundle=arguments?.getString("tipo")
+        dbFirestore.collection("Locations")
+            .whereEqualTo("type",locationBundle)
+            .get(Source.CACHE)
+            .addOnSuccessListener {
+                val locationsAcordingtype= it.documents.toList()
+                adapter.setlocations(locationsAcordingtype)
+        }
 
 
         return binding.root

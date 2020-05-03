@@ -15,6 +15,7 @@ import com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.LocationTypeAdapter
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.SearchLocationActivityViewModel
 import com.erwinlaura.agendafcyt.databinding.FragmentAllTypeMapLocationsBinding
+import com.google.firebase.firestore.Source
 
 /**
  * A simple [Fragment] subclass.
@@ -37,9 +38,31 @@ class AllTypeMapLocationsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         searchLocationViewModel=ViewModelProvider(this).get(SearchLocationActivityViewModel::class.java)
-        searchLocationViewModel.alltypeMapLocations.observe(viewLifecycleOwner, Observer {type->
-            type.let { adapter?.setlocations(it) }
-        })
+//        searchLocationViewModel.alltypeMapLocations.observe(viewLifecycleOwner, Observer {type->
+//            //type.let { adapter?.setlocations(it) }
+//
+//        })
+
+
+//        searchLocationViewModel.alltypeMapLocations.get(Source.CACHE).addOnSuccessListener {
+//            if(it.exists()) adapter?.setlocations(it.data!!.toList())
+//        }
+//        searchLocationViewModel.alltypeMapLocations.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+////            if(documentSnapshot!=null && documentSnapshot.metadata.hasPendingWrites()){
+////                //local
+////            }
+////            else{
+////                //server
+////            }
+//            if (documentSnapshot != null) adapter?.setlocations(documentSnapshot.data!!.toList())
+//
+//        }
+
+        searchLocationViewModel.alltypeMapLocations.get(Source.CACHE).addOnSuccessListener {
+
+             adapter?.setlocations(it.data!!.toList())
+        }
+
 
         return binding.root
     }

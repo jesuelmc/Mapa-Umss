@@ -1,7 +1,10 @@
 package com.erwinlaura.agendafcyt.Maps.MapActivity
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
@@ -11,24 +14,33 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.*
+import androidx.preference.PreferenceManager
 import com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.SearchLocationActivity
 import com.erwinlaura.agendafcyt.Models.MapLocationModel
+import com.erwinlaura.agendafcyt.Presentation.PresentationActivity
+import com.erwinlaura.agendafcyt.Presentation.PresentationFragment
 import com.erwinlaura.agendafcyt.R
+import com.erwinlaura.agendafcyt.Utils.snackBar
 import com.erwinlaura.agendafcyt.databinding.ActivityMapsBinding
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.Source
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.FileNotFoundException
+import java.util.*
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener{
 
@@ -40,15 +52,24 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
 
     private lateinit var sheetBehavior:BottomSheetBehavior<View>
 
+    private lateinit var idDocumentFirestore:String
+
 
     companion object {
         val REQUEST_CODE_SEARCHLOCATION = 3243
+        val REQUEST_CODE_GET_IMAGE=234
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding=DataBindingUtil.setContentView(this,R.layout.activity_maps)
+
+        PreferenceManager.getDefaultSharedPreferences(this).apply {
+            if(!getBoolean(PresentationFragment.COMPLETED_PRESENTATION,false)){
+                startActivity(Intent(this@MapActivity,PresentationActivity::class.java))
+            }
+        }
 
 
         setSupportActionBar(binding.mapToolbar)
@@ -60,6 +81,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
         val supActionBar=supportActionBar
 
 
+        //snackBar("se inicio",binding.mapToolbar)
 
 
 
@@ -70,6 +92,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
 
 
         buttoBehabior()
+        binding.buttonGetImage.setOnClickListener {
+
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            startActivityForResult(intent, REQUEST_CODE_GET_IMAGE)
+
+        }
         viewModel=ViewModelProvider(this).get(MapActivityViewModel::class.java)
 
 
@@ -118,17 +147,19 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
 //        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
 
-
         val campusCentral = LatLng(-17.39356623953956,-66.14553816328916)
         //gMap.addMarker(MarkerOptions().position(campusCentral).title("Marker in Sydney"))
 
         val camera: CameraPosition? =
-            CameraPosition.builder().target(campusCentral).zoom(18F).bearing(0F).tilt(30F).build()
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera))
-        //gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(campusCentral,18F))
-        mMap.setMinZoomPreference(18F)
+            CameraPosition.builder().target(campusCentral).zoom(18F).bearing(350F).tilt(30F).build()
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(camera))
 
-        val limit = LatLngBounds(LatLng(-17.39307480327583,-66.14951160041626), LatLng(-17.39173972730723,-66.14224269812405))
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this,R.raw.style_map_json))
+        //gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(campusCentral,18F))
+        mMap.uiSettings.isCompassEnabled=true
+        mMap.setMinZoomPreference(18F) 
+
+        val limit = LatLngBounds(LatLng(-17.396785117962597,-66.149278920572), LatLng(-17.39122576220317,-66.1421862396757))
         mMap.setLatLngBoundsForCameraTarget(limit)
 
     }
@@ -151,15 +182,27 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
 
     }
 
-    private fun showLocation(locationModel:MapLocationModel){
+    private fun showLocation(locationDocument:DocumentSnapshot){
 
+
+        binding.buttonGetImage.visibility=View.GONE
+        val locationMap=locationDocument.data!!
         mMap.clear()
-        val location=LatLng(locationModel.latitude.toDouble(),locationModel.longitude.toDouble())
-        mMap.addMarker(MarkerOptions().position(location).title(locationModel.name)).showInfoWindow()
-        val camera: CameraPosition? =
-            CameraPosition.builder().target(location).zoom(18F).bearing(0F).tilt(30F).build()
+        val latitude=(locationMap["geopoint"] as GeoPoint).latitude
+        val longitude=(locationMap["geopoint"] as GeoPoint).longitude
+        val location=LatLng(latitude,longitude)
+        val name=locationMap["name"].toString()
+
+        mMap.addMarker(MarkerOptions().position(location).title(name)).showInfoWindow()
+
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,18F))
+
+        val camera: CameraPosition? = CameraPosition.builder().target(location).zoom(18F).bearing(350F).tilt(30F).build()
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera))
 
+
+
+        binding.textViewBottom.text=name
 
 //        if (sheetBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
             sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
@@ -171,17 +214,51 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
         //viewModel.onShowLocationComplete()
 
         val imageContainer:LinearLayout=binding.imageContainerMap
+
+        imageContainer.removeAllViews()
+
         val imageContainerParams:LinearLayout.LayoutParams=LinearLayout.LayoutParams(250,200)
 
-        for(i in 1 .. 4){
-            imageContainerParams.setMargins(20,20,20,20)
-            imageContainerParams.gravity=Gravity.CENTER
-            val imageView = ImageView(this)
 
-            imageView.setImageResource(R.drawable.menu_header)
-            imageView.layoutParams=imageContainerParams
-            imageContainer.addView(imageView)
-        }
+        //val imagesMap=locationMap["images"] as List<*>
+
+        viewModel.dbFirestore.collection("Locations")
+            .document(idDocumentFirestore)
+            .collection("Images")
+            .document("images")
+            .addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                var i=0
+                documentSnapshot?.data?.forEach {
+                    if(it.value.toString()!="") {
+                        i++
+                        imageContainerParams.setMargins(20, 20, 20, 20)
+                        imageContainerParams.gravity = Gravity.CENTER
+                        val imageView = ImageView(this)
+                        imageView.layoutParams = imageContainerParams
+                        Picasso.get().load(it.value.toString()).fit().into(imageView)
+                        imageContainer.addView(imageView)
+                    }
+                }
+                if(i<5) binding.buttonGetImage.visibility=View.VISIBLE
+            }
+
+//        imagesMap.forEach {
+//            imageContainerParams.setMargins(20,20,20,20)
+//            imageContainerParams.gravity=Gravity.CENTER
+//            val imageView = ImageView(this)
+//            imageView.layoutParams=imageContainerParams
+//            Picasso.get().load(it.toString()).fit().into(imageView)
+//        }
+//
+//        for(i in 1 .. 4){
+//            imageContainerParams.setMargins(20,20,20,20)
+//            imageContainerParams.gravity=Gravity.CENTER
+//            val imageView = ImageView(this)
+//
+//            imageView.setImageResource(R.drawable.menu_header)
+//            imageView.layoutParams=imageContainerParams
+//            imageContainer.addView(imageView)
+//        }
 
 
 
@@ -190,21 +267,93 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        when(requestCode){
-            REQUEST_CODE_SEARCHLOCATION->{
-                if(resultCode== Activity.RESULT_OK){
-                    if (data != null) {
-
+        if(resultCode== Activity.RESULT_OK){
+            if (data != null) {
+                when (requestCode) {
+                    REQUEST_CODE_SEARCHLOCATION -> {
+                        idDocumentFirestore=data.getStringExtra("id")!!
                         lifecycle.coroutineScope.launch {
-                            val x= withContext(Dispatchers.Default){ viewModel.getLocation((data.getStringExtra("id"))!!.toInt())}
-                            //viewModel.setLocation((data.getStringExtra("id"))!!.toInt())
-                            showLocation(x)
+//                            val x = withContext(Dispatchers.Default) {
+//                                viewModel.getLocation((data.getStringExtra("id"))!!.toInt())
+//                            }
+//                            //viewModel.setLocation((data.getStringExtra("id"))!!.toInt())
+//                            showLocation(x)
+
+                            viewModel.dbFirestore.collection("Locations")
+                                .document(idDocumentFirestore)
+                                .get(Source.CACHE)
+                                .addOnSuccessListener {
+                                   // val location= it.data
+                                    showLocation(it)
+                            }
+
+
+                        }
+
+                    }
+
+                    REQUEST_CODE_GET_IMAGE -> {
+
+                        snackBar("Se subio su imagen correctamente ",binding.mapToolbar)
+                        val selectedImage = data.data
+                        if (selectedImage != null) {
+                            binding.progressBarUploadImage.visibility=View.VISIBLE
+                            binding.buttonGetImage.isEnabled=false
+                            val path = "imagenesMapa/" + UUID.randomUUID() + selectedImage.lastPathSegment
+                            val riversRef = viewModel.storageRef.child(path)
+                            val uploadTask = riversRef.putFile(selectedImage)
+
+                            uploadTask.addOnCompleteListener {
+                                binding.progressBarUploadImage.visibility=View.GONE
+                                binding.buttonGetImage.isEnabled=true
+                            }
+                            val getDownloadUriTask=uploadTask.continueWithTask{ task ->
+                                if (!task.isSuccessful) {
+                                    task.exception?.let { throw it }
+                                }
+                                //snackBar(riversRef.downloadUrl.toString(),binding.mapToolbar,Snackbar.LENGTH_LONG)
+                                riversRef.downloadUrl
+                            }
+
+                            getDownloadUriTask.addOnCompleteListener { task ->
+                                //xif (task.isSuccessful) {
+                                    val downloadUri = task.result
+
+                                    val images=viewModel.dbFirestore
+                                        .collection("Locations")
+                                        .document(idDocumentFirestore).collection("Images").document("images")
+
+                                    viewModel.dbFirestore.collection("Locations")
+                                        .document(idDocumentFirestore)
+                                        .collection("Images")
+                                        .document("images")
+                                        .get(Source.SERVER).addOnSuccessListener {
+                                            for(document in it?.data?.toList()!!){
+                                                if(document.second==null || document.second.toString()==""){
+                                                    images.update(document.first.toString(),downloadUri.toString())
+                                                    break
+                                                }
+                                            }
+
+//                                            documentSnapshot?.data?.forEach {
+//                                                if(it.component2()==null || it.component2().toString()==""){
+//                                                    images.update(it.key.toString(),downloadUri.toString())
+//
+//                                                }
+//                                            }
+                                        }
+//                                    location.update("urlImage1",downloadUri.toString())
+                                    //snackBar("se ejecuto el ultimo",binding.mapToolbar)
+                                //}
+                            }
                         }
                     }
+
                 }
             }
         }
     }
+
 
     fun buttoBehabior(){
         //val coordinatorLayou:CoordinatorLayout=binding.myCoordinatorLayout
@@ -224,6 +373,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, NavigationView.OnNa
             }
         })
     }
-
-
 }
+
+

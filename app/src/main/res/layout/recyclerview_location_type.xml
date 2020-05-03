@@ -8,26 +8,33 @@
         android:layout_margin="15dp"
         android:clickable="true"
         android:focusable="true"
-        android:background="#333"
+        android:background="@color/colorPrimary"
 
         >
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textViewLocationType"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewLocations"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:backgroundTint="@color/colorPrimary"
             android:layout_marginBottom="10dp"
             android:shadowColor="#000"
-
             android:shadowDy="3"
             android:shadowDx="3"
             android:shadowRadius="3"
-            android:textAllCaps="true"
-            android:textColor="@color/colorAccent"
-            android:textStyle="bold"
-            android:textSize="35dp"
-            />
+
+            >
+            <TextView
+                android:id="@+id/textViewLocationType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="33dp"
+
+                />
+
+
+        </androidx.cardview.widget.CardView>
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
