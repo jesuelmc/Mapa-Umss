@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.erwinlaura.agendafcyt.R
-import com.erwinlaura.agendafcyt.databinding.FragmentAllLocationsAcordingTypeBinding
+import com.erwinlaura.agendafcyt.databinding.MapFragmentAllLocationsAcordingTypeBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 
@@ -19,9 +19,9 @@ import com.google.firebase.firestore.Source
  */
 class LocationsAcordingTypeFragment : Fragment() {
 
-    private lateinit var binding: FragmentAllLocationsAcordingTypeBinding
+    private lateinit var binding: MapFragmentAllLocationsAcordingTypeBinding
 
-    var dbFirestore= FirebaseFirestore.getInstance()
+    var dbFirestore = FirebaseFirestore.getInstance()
 
 
     override fun onCreateView(
@@ -29,33 +29,36 @@ class LocationsAcordingTypeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding=DataBindingUtil.inflate(inflater,R.layout.fragment_all_locations_acording_type, container, false)
-        //binding.textViewMapLocation.text = arguments?.getString("tipo")
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.map_fragment_all_locations_acording_type,
+            container,
+            false
+        )
 
-        val recyclerView =binding.RecyclerViewAllLocationsAcordingType
-        val adapter = context?.let { activity?.let { it1 ->
-            LocationsAcordingTypeAdapter(
-                it,
-                it1
-            )
-        } }!!
+
+        val recyclerView = binding.RecyclerViewAllLocationsAcordingType
+        val adapter = context?.let {
+            activity?.let { it1 ->
+                LocationsAcordingTypeAdapter(
+                    it,
+                    it1
+                )
+            }
+        }!!
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-//        lifecycle.coroutineScope.launch {
-//            val locations=arguments?.getString("tipo")
-//            val locationsAcordingType: List<MapLocationModel> =viewModel.getLocationsAcordingType(locations!!)
-//            adapter.setlocations(locationsAcordingType)
-//            }
-
-        val locationBundle=arguments?.getString("tipo")
+        val locationBundle = arguments?.getString("tipo")
         dbFirestore.collection("Locations")
-            .whereEqualTo("type",locationBundle)
+            .whereEqualTo("type", locationBundle)
             .get(Source.CACHE)
             .addOnSuccessListener {
-                val locationsAcordingtype= it.documents.toList()
+                val locationsAcordingtype = it.documents.toList()
                 adapter.setlocations(locationsAcordingtype)
-        }
+            }
+
+
 
 
         return binding.root

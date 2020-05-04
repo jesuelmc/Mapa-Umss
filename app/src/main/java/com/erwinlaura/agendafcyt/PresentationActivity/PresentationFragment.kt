@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 
 import com.erwinlaura.agendafcyt.R
-import com.erwinlaura.agendafcyt.databinding.FragmentPresentationBinding
+import com.erwinlaura.agendafcyt.databinding.MapFragmentPresentationBinding
 
 /**
  * A simple [Fragment] subclass.
@@ -17,7 +17,7 @@ import com.erwinlaura.agendafcyt.databinding.FragmentPresentationBinding
 class PresentationFragment : Fragment() {
 
 
-    private lateinit var binding:FragmentPresentationBinding
+    private lateinit var binding:MapFragmentPresentationBinding
 
     companion object{
         var COMPLETED_PRESENTATION="com.erwinlaura.agendafcyt.completedPresentation"
@@ -29,7 +29,7 @@ class PresentationFragment : Fragment() {
     ): View? {
 
 
-        binding=DataBindingUtil.inflate(inflater,R.layout.fragment_presentation, container, false)
+        binding=DataBindingUtil.inflate(inflater,R.layout.map_fragment_presentation, container, false)
 
 
         return binding.root

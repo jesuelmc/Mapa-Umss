@@ -9,7 +9,7 @@
         android:id="@+id/allTypeMapLocationsFragment"
         android:name="com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.AllTypeMapLocationsFragment.AllTypeMapLocationsFragment"
         android:label="fragment_all_locations_map"
-        tools:layout="@layout/fragment_all_type_map_locations" >
+        tools:layout="@layout/map_fragment_all_type_map_locations" >
         <action
             android:id="@+id/action_allTypeMapLocationsFragment_to_allMapLocationsFragment"
             app:destination="@id/allMapLocationsFragment" />
@@ -21,12 +21,12 @@
         android:id="@+id/searchLocationMapFragment"
         android:name="com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.SearchLocationMapFragment.SearchLocationMapFragment"
         android:label="fragment_search_location_map"
-        tools:layout="@layout/fragment_search_location_map" />
+        tools:layout="@layout/map_fragment_search_location_map" />
     <fragment
         android:id="@+id/allMapLocationsFragment"
         android:name="com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.LocationsAcordingTypeFragment.LocationsAcordingTypeFragment"
         android:label="AllMapLocationsFragment"
-        tools:layout="@layout/fragment_all_locations_acording_type"
+        tools:layout="@layout/map_fragment_all_locations_acording_type"
         >
         <argument
             android:name="tipo"

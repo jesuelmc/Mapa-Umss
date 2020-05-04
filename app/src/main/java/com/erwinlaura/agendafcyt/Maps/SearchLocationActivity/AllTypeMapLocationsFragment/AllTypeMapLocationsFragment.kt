@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.erwinlaura.agendafcyt.R
 import com.erwinlaura.agendafcyt.SearchLocationActivityViewModel
-import com.erwinlaura.agendafcyt.databinding.FragmentAllTypeMapLocationsBinding
+import com.erwinlaura.agendafcyt.databinding.MapFragmentAllTypeMapLocationsBinding
 import com.google.firebase.firestore.Source
 
 /**
@@ -20,54 +20,39 @@ import com.google.firebase.firestore.Source
  */
 class AllTypeMapLocationsFragment : Fragment() {
 
-    lateinit var binding: FragmentAllTypeMapLocationsBinding
-    private lateinit var searchLocationViewModel:SearchLocationActivityViewModel
+    lateinit var binding: MapFragmentAllTypeMapLocationsBinding
+    private lateinit var searchLocationViewModel: SearchLocationActivityViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        binding=DataBindingUtil.inflate(inflater,R.layout.fragment_all_type_map_locations, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.map_fragment_all_type_map_locations,
+            container,
+            false
+        )
 
-        val recyclerView =binding.RecyclerViewAllTypeMapLocations
+
+        val recyclerView = binding.RecyclerViewAllTypeMapLocations
         val adapter = context?.let {
-            LocationTypeAdapter(
-                it,
-                this
-            )
+            LocationTypeAdapter(it, this)
         }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        searchLocationViewModel=ViewModelProvider(this).get(SearchLocationActivityViewModel::class.java)
-//        searchLocationViewModel.alltypeMapLocations.observe(viewLifecycleOwner, Observer {type->
-//            //type.let { adapter?.setlocations(it) }
-//
-//        })
+        searchLocationViewModel =
+            ViewModelProvider(this).get(SearchLocationActivityViewModel::class.java)
 
-
-//        searchLocationViewModel.alltypeMapLocations.get(Source.CACHE).addOnSuccessListener {
-//            if(it.exists()) adapter?.setlocations(it.data!!.toList())
-//        }
-//        searchLocationViewModel.alltypeMapLocations.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
-////            if(documentSnapshot!=null && documentSnapshot.metadata.hasPendingWrites()){
-////                //local
-////            }
-////            else{
-////                //server
-////            }
-//            if (documentSnapshot != null) adapter?.setlocations(documentSnapshot.data!!.toList())
-//
-//        }
 
         searchLocationViewModel.alltypeMapLocations.get(Source.CACHE).addOnSuccessListener {
 
-             adapter?.setlocations(it.data!!.toList())
+            adapter?.setlocations(it.data!!.toList())
         }
 
 
         return binding.root
     }
-
 }

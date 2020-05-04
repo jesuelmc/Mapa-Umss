@@ -16,27 +16,28 @@ class LocationTypeAdapter internal constructor(
 ) : RecyclerView.Adapter<LocationTypeAdapter.LocationMapViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var locations:List<Pair<String,Any>> = emptyList()
-   // private var locations = emptyList<MapLocationModel>() // Cached copy of locations
+    private var locations: List<Pair<String, Any>> = emptyList()
 
-    inner class LocationMapViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),View.OnClickListener {
+    inner class LocationMapViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
         }
+
         override fun onClick(v: View?) {
-            val mPosition:Int=layoutPosition
-            val nav=findNavController(fragment)
+            val mPosition: Int = layoutPosition
+            val nav = findNavController(fragment)
 
-            val bundle= bundleOf("tipo" to locations[mPosition].second.toString())
+            val bundle = bundleOf("tipo" to locations[mPosition].second.toString())
 
-            nav.navigate(R.id.action_allTypeMapLocationsFragment_to_allMapLocationsFragment,bundle)
+            nav.navigate(R.id.action_allTypeMapLocationsFragment_to_allMapLocationsFragment, bundle)
         }
 
         val LocationTypeItemView: TextView = itemView.findViewById(R.id.textViewLocationType)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationMapViewHolder {
-        val itemView = inflater.inflate(R.layout.recyclerview_location_type, parent, false)
+        val itemView = inflater.inflate(R.layout.map_recyclerview_location_type, parent, false)
         return LocationMapViewHolder(itemView)
     }
 
@@ -45,11 +46,7 @@ class LocationTypeAdapter internal constructor(
         holder.LocationTypeItemView.text = current.second.toString()
     }
 
-//    internal fun setlocations(locations: List<MapLocationModel>) {
-//        this.locations = locations
-//        notifyDataSetChanged()
-//    }
-    internal fun setlocations(locations:List<Pair<String,Any>>) {
+    internal fun setlocations(locations: List<Pair<String, Any>>) {
         this.locations = locations
         notifyDataSetChanged()
     }

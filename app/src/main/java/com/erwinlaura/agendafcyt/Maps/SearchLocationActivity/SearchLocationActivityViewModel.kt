@@ -1,44 +1,4 @@
 package com.erwinlaura.agendafcyt
-/*
-¿Qué es un modelo de vista?
-La ViewModelfunción de este es proporcionar datos a la interfaz de usuario y sobrevivir
-a los cambios de configuración. A ViewModelactúa como un centro de comunicación entre el repositorio
-y la interfaz de usuario. También puede usar a ViewModelpara compartir datos entre fragmentos. ViewModel
- es parte de la biblioteca del ciclo de vida . arquitectura: https://developer.android.com/topic/libraries/architecture/viewmodel.html
-
-
- ¿Por qué usar un ViewModel?
-A ViewModelguarda los datos de la interfaz de usuario de su aplicación de una manera
-consciente del ciclo de vida que sobrevive a los cambios de configuración. La separación de los datos
-de la interfaz de usuario de tu aplicación de sus Activityy Fragmentclases le permite seguir mejor el
- principio de la responsabilidad individual: Sus actividades y fragmentos son responsables de elaborar
- los datos a la pantalla, mientras que su ViewModelpuede hacerse cargo de la explotación y el
- procesamiento de todos los datos necesarios para la interfaz de usuario.
-
-En el ViewModel, use LiveDatapara datos modificables que la UI usará o mostrará. Usar LiveDatatiene
- varios beneficios:
-1 Puede colocar un observador en los datos (en lugar de sondear los cambios) y solo actualizar
-la IU cuando los datos realmente cambian.
-2 El repositorio y la interfaz de usuario están completamente separados por ViewModel.
-3 No hay llamadas a la base de datos desde ViewModel(
-todo esto se maneja en el Repositorio), lo que hace que el código sea más verificable.
-
-
-
-
-viewModelScope
-En Kotlin, todas las corutinas corren dentro de a CoroutineScope.
-Un alcance controla la vida útil de las corutinas a través de su trabajo. Cuando cancela el
- trabajo de un ámbito, cancela todas las rutinas iniciadas en ese ámbito.
-La lifecycle-viewmodel-ktxbiblioteca AndroidX agrega una viewModelScopefunción de extensión de
-la ViewModelclase, que le permite trabajar con ámbitos.
-
-Para obtener más información sobre cómo trabajar con corutinas en ViewModel,
-consulte el Paso 5 de Uso de Kotlin Coroutines en su codelab de la aplicación de Android o
-Easy Coroutines en Android: viewModelScope blogpost .:https://medium.com/androiddevelopers/easy-coroutines-in-android-viewmodelscope-25bffb605471
- */
-
-
 
 import android.app.Application
 import androidx.lifecycle.*
@@ -54,40 +14,18 @@ class SearchLocationActivityViewModel(application: Application) : AndroidViewMod
 
 
     val repository: MapLocationRepository
-    // Using LiveData and caching what getAlphabetizedWords returns has several benefits:
-    // - We can put an observer on the data (instead of polling for changes) and only update the
-    //   the UI when the data actually changes.
-    // - Repository is completely separated from the UI through the ViewModel.
-    // val allLocationMap: LiveData<MutableList<MapLocationModel>>
-    //val alltypeMapLocations: LiveData<List<MapLocationModel>>
     val searchViewText: MutableLiveData<String> = MutableLiveData()
-
 
     //firestore
     var dbFirestore= FirebaseFirestore.getInstance()
     val alltypeMapLocations=dbFirestore.collection("Locations").document("Types")
     var locations=dbFirestore.collection("Locations")
 
-
-    //val joinLocationsSearchviewtext :LiveData<Pair<MutableList<MapLocationModel>,String>>
-
-
-
-
     init {
         val mapLocationDao = DataBase.getDatabase(application,viewModelScope).mapLocationDao()
         repository = MapLocationRepository(mapLocationDao)
-        //allLocationMap = repository.allMapLocation
-        //alltypeMapLocations=repository.allTypeMapLocations
-
-
-        //joinLocationsSearchviewtext=joinLocationsSearchViewText(allLocationMap,searchViewText)
     }
 
-
-    /**
-     * Launching a new coroutine to insert the data in a non-blocking way
-     */
    fun insert(mapLocation: MapLocationModel) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(mapLocation)
     }

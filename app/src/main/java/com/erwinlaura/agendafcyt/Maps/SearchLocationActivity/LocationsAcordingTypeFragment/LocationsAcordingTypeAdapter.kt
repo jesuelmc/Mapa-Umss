@@ -13,38 +13,40 @@ import com.erwinlaura.agendafcyt.R
 import com.google.firebase.firestore.DocumentSnapshot
 
 class LocationsAcordingTypeAdapter internal constructor(
-    context: Context,activity: FragmentActivity
+    context: Context, activity: FragmentActivity
 ) : RecyclerView.Adapter<LocationsAcordingTypeAdapter.LocationMapViewHolder>() {
 
-    private val activity:FragmentActivity=activity
+    private val activity: FragmentActivity = activity
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var locations = emptyList<DocumentSnapshot>() // Cached copy of locations
 
-    inner class LocationMapViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),View.OnClickListener {
+    inner class LocationMapViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
         init {
             itemView.setOnClickListener(this)
         }
+
         override fun onClick(v: View?) {
-            val mPosition:Int=layoutPosition
+            val mPosition: Int = layoutPosition
             val locationClickID = locations[mPosition].id
 
-            val intent=Intent()
-            intent.putExtra("id",locationClickID)
-            activity.setResult(Activity.RESULT_OK,intent)
+            val intent = Intent()
+            intent.putExtra("id", locationClickID)
+            activity.setResult(Activity.RESULT_OK, intent)
             activity.finish()
         }
 
-        val LocationTypeItemView: TextView = itemView.findViewById(R.id.textViewLocationType)
+        val locationTypeItemView: TextView = itemView.findViewById(R.id.textViewLocationType)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationMapViewHolder {
-        val itemView = inflater.inflate(R.layout.recyclerview_location_type, parent, false)
+        val itemView = inflater.inflate(R.layout.map_recyclerview_location_type, parent, false)
         return LocationMapViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: LocationMapViewHolder, position: Int) {
         val current = locations[position].data?.get("name")
-        holder.LocationTypeItemView.text = current.toString()
+        holder.locationTypeItemView.text = current.toString()
     }
 
     internal fun setlocations(locations: List<DocumentSnapshot>) {
