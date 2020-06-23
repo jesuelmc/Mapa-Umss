@@ -1,33 +1,30 @@
-package com.erwinlaura.agendafcyt.Maps.MapActivity
+package com.erwinlaura.agendafcyt.Maps.MapFragment
+
 
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import android.widget.LinearLayout
-
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.*
-import androidx.preference.PreferenceManager
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.coroutineScope
+import com.erwinlaura.agendafcyt.MainActivity
+import com.erwinlaura.agendafcyt.MainActivity.Companion.REQUEST_CODE_SEARCHLOCATION
 import com.erwinlaura.agendafcyt.Maps.SearchLocationActivity.SearchLocationActivity
-import com.erwinlaura.agendafcyt.PresentationActivity.PresentationActivity
-import com.erwinlaura.agendafcyt.PresentationActivity.PresentationFragment
-import com.erwinlaura.agendafcyt.R
-import com.erwinlaura.agendafcyt.Utils.snackBar
-import com.erwinlaura.agendafcyt.databinding.MapActivityMapsBinding
 
+import com.erwinlaura.agendafcyt.databinding.FragmentMapBinding
+import com.erwinlaura.agendafcyt.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.Source
@@ -35,104 +32,56 @@ import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import java.util.*
 
-class MapActivity : AppCompatActivity(), OnMapReadyCallback,
-    NavigationView.OnNavigationItemSelectedListener {
+
+class MapFragment : Fragment() ,OnMapReadyCallback{
 
 
-    private lateinit var mMap: GoogleMap
-    private lateinit var binding: MapActivityMapsBinding
-    private lateinit var viewModel: MapActivityViewModel
-        private lateinit var sheetBehavior: BottomSheetBehavior<View>
-        private lateinit var idDocumentFirestore: String
+    private lateinit var binding:FragmentMapBinding
+
+    private lateinit var mMap:GoogleMap
+    private lateinit var mapView:MapView
+
+    private lateinit var sheetBehavior: BottomSheetBehavior<View>
+    private lateinit var idDocumentFirestore: String
+
+    private lateinit var viewModel:MapFragmentViewModel
 
 
-    companion object {
-        const val REQUEST_CODE_SEARCHLOCATION = 3243
-        const val REQUEST_CODE_GET_IMAGE = 234
-    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        //for get data from firestore
-        checkIfFirstExecution()
+        setHasOptionsMenu(true)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.map_activity_maps)
-        setSupportActionBar(binding.mapToolbar)
-        //supportActionBar?.title = null
+        binding= DataBindingUtil.inflate(inflater,R.layout.fragment_map, container, false)
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map_fragment) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        viewModel=ViewModelProvider(this).get(MapFragmentViewModel::class.java)
 
         bottomSheetBehavior()
 
         listenerGetImageOfGallery()
 
-        viewModel = ViewModelProvider(this).get(MapActivityViewModel::class.java)
+
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        mapView=binding.map
+        //aqui en vez de null se puede pasar un dato
+        mapView.onCreate(null)
+        mapView.onResume()
+        mapView.getMapAsync(this)
 
 
     }
 
-    private fun listenerGetImageOfGallery() {
-        binding.buttonGetImage.setOnClickListener {
-
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "image/*"
-            startActivityForResult(intent, REQUEST_CODE_GET_IMAGE)
-
-        }
-    }
-
-    private fun checkIfFirstExecution() {
-        PreferenceManager.getDefaultSharedPreferences(this).apply {
-            //Is first execution?
-            if (!getBoolean(PresentationFragment.COMPLETED_PRESENTATION, false)) {
-                startActivity(Intent(this@MapActivity, PresentationActivity::class.java))
-            }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-
-
-        //inflate toolbar
-        menuInflater.inflate(R.menu.map_menu_toolbar, menu)
-
-        menu?.let {
-            inflateNavigationDrawer(it)
-        }
-
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    private fun inflateNavigationDrawer(menu: Menu) {
-
-        val toggle = ActionBarDrawerToggle(
-            this,
-            binding.mapDrawerLayout,
-            binding.mapToolbar,
-            R.string.open_drawer,
-            R.string.close_drawer
-        )
-        toggle.isDrawerIndicatorEnabled = true
-        binding.mapDrawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-        binding.navigation.setNavigationItemSelectedListener(this)
-
-    }
-
-    //items for select(To change body of created functions use File | Settings | File Templates.)
-    override fun onNavigationItemSelected(p0: MenuItem): Boolean {
-
-
-        return true
-    }
-
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+    override fun onMapReady(p0: GoogleMap?) {
+        mMap= p0!!
 
         val campusCentral = LatLng(-17.39356623953956, -66.14553816328916)
         val camera: CameraPosition? = CameraPosition.builder()
@@ -145,7 +94,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
             CameraUpdateFactory.newCameraPosition(camera)
         )
         mMap.setMapStyle(
-            MapStyleOptions.loadRawResourceStyle(this, R.raw.style_map_json)
+            MapStyleOptions.loadRawResourceStyle(activity, R.raw.style_map_json)
         )
         mMap.setMinZoomPreference(18F)
         val limit = LatLngBounds(
@@ -155,23 +104,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
         mMap.setLatLngBoundsForCameraTarget(limit)
 
     }
+    private fun listenerGetImageOfGallery() {
+        binding.buttonGetImage.setOnClickListener {
 
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            startActivityForResult(intent,
+                MainActivity.REQUEST_CODE_GET_IMAGE
+            )
 
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.map_search_item -> {
-                startActivityForResult(
-                    Intent(this, SearchLocationActivity::class.java),
-                    REQUEST_CODE_SEARCHLOCATION
-                )
-                true
-            }
-            else -> {
-                super.onOptionsItemSelected(item)
-            }
         }
-
     }
 
     private fun showLocation() {
@@ -216,7 +158,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
                         i++
                         imageContainerParams.setMargins(20, 20, 20, 20)
                         imageContainerParams.gravity = Gravity.CENTER
-                        val imageView = ImageView(this)
+                        val imageView = ImageView(activity)
                         imageView.layoutParams = imageContainerParams
                         Picasso.get().load(it.value.toString()).fit().into(imageView)
                         imageContainer.addView(imageView)
@@ -226,7 +168,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
             }
 
     }
-
 
     private fun markerAndMoveCamera(locationDocument: DocumentSnapshot) {
         val locationMap = locationDocument.data!!
@@ -259,12 +200,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
             if (data != null) {
                 when (requestCode) {
 
-                    REQUEST_CODE_SEARCHLOCATION -> {
+                    MainActivity.REQUEST_CODE_SEARCHLOCATION -> {
                         idDocumentFirestore = data.getStringExtra("id")!!
                         showLocation()
                     }
 
-                    REQUEST_CODE_GET_IMAGE -> uploadImage(data)
+                    MainActivity.REQUEST_CODE_GET_IMAGE -> uploadImage(data)
 
                 }
             }
@@ -300,6 +241,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
         }
     }
 
+
     private fun updateFirestore(getDownloadUriTask: Task<Uri>) {
 
         getDownloadUriTask.addOnCompleteListener { task ->
@@ -331,7 +273,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
         }
     }
 
-
     private fun bottomSheetBehavior() {
         //val coordinatorLayou:CoordinatorLayout=binding.myCoordinatorLayout
 
@@ -350,12 +291,31 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.map_menu_toolbar,menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when (item.itemId) {
+            R.id.map_search_item -> {
+
+                startActivityForResult(
+                    Intent(activity, SearchLocationActivity::class.java),
+                    REQUEST_CODE_SEARCHLOCATION
+                )
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
     private fun fieldUrlIsFree(fieldUrl: Any?): Boolean =
         (fieldUrl == null || fieldUrl.toString() == "")
 
     private fun imageContainerIsFull(i: Int): Boolean = (i >= 5)
 
-
 }
-
 
